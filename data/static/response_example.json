@@ -1,0 +1,21 @@
+{
+    "id": "chatcmpl-7syK0sccacAWrAOOTEFFGNtF0ZWUq",
+    "object": "chat.completion",
+    "created": 1693335944,
+    "model": "gpt-3.5-turbo-0613",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "Of course, Long! To check the weather for your location, please provide me with your current city or location."
+            },
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 58,
+        "completion_tokens": 23,
+        "total_tokens": 81
+    }
+}
