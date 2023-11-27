@@ -123,7 +123,7 @@ if 'to_delete' not in st.session_state:
     
 # Create a container for the buttons
 with st.container():
-    col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
 
     with col1:
         button1 = st.button("Add new profile resume")
@@ -132,7 +132,9 @@ with st.container():
     with col3:
         button3 = st.button("Suggestion for editing resume")
     with col4:
-        button4 = st.button("Delete profile resume")
+        button4 = st.button("Answer question using profile resume")
+    with col5: 
+        button5 = st.button("Delete profile resume")
 
     if button1:
         st.session_state.show_form = 'form1'
@@ -142,6 +144,8 @@ with st.container():
         st.session_state.show_form = 'form3'
     elif button4:
         st.session_state.show_form = 'form4'
+    elif button5:
+        st.session_state.show_form = 'form5'
 
 # Create containers for each form
 with st.container():
@@ -191,63 +195,28 @@ with st.container():
                 center_running()
                 response = test.suggest_resume(user_resume)
                 st.session_state.show_form = 'form3'  # Reset the form visibility if needed
-
+                    
     elif st.session_state.show_form == 'form4':
+        clear_response()
+        with st.form(key='form4'):
+            st.write("Enter your question")
+            
+            names = test.get_profiles_name()
+            
+            name = st.selectbox("Select user resume: ", names)
+            job_description = st.text_area("Question: ", value="", height=300, max_chars=None)
+            addition_request = st.text_input("Addition request:")
+            submit_button = st.form_submit_button("Submit Form 4")
+
+            if submit_button:
+                st.write(f"Submitted Question and Resume")
+                center_running()
+                response = test.answer_question_base_on_resume(name, job_description, addition_request)
+                st.session_state.show_form = 'form4'  # Reset the form visibility if needed
+                
+    elif st.session_state.show_form == 'form5':
         response = "Deleting process"
         profiles = test.load_profiles()
-        
-        # # Show list of profiles
-        # st.write("### List of Profiles")
-
-        # for i, profile in enumerate(profiles):
-        #     col1, col2, col3 = st.columns([5, 1, 1])  # Adjust the numbers for your specific layout needs
-            
-        #     with col1:
-        #         st.write(f"{i+1}. {profile['name']}")
-            
-        #     with col2:
-        #         # if st.button(f"Delete Profile", key=f"Delete-{profile['name']}"):
-        #         if st.button(f"Delete Profile", key=f"Delete-{profile['name']}"):
-        #             st.warning("You cannot recover this profile in the future")
-        #             with col3:
-        #                 # if button(f"Confirm Delete Profile", key=f"Confirm-{profile['name']}"):
-        #                 if button(f"Confirm Delete Profile", key=f"Confirm-{profile['name']}"):
-        #                     # Your delete logic here
-        #                     st.write("Profile deleted")
-        #                     test.delete_profile_by_name(profile['name'])
-        #                     center_running()
-        #                     time.sleep(2)  
-        #                     # st.experimental_rerun() 
-        
-        # # Show list of profiles
-        # st.write("### List of Profiles")
-
-        # for i, profile in enumerate(profiles):
-        #     col1, col2, col3 = st.columns([5, 1, 1])  # Adjust the numbers for your specific layout needs
-
-        #     with col1:
-        #         st.write(f"{i+1}. {profile['name']}")
-
-        #     with col2:
-        #         if st.button(f"Delete Profile", key=f"Delete-{profile['name']}"):
-        #             st.session_state.to_delete = profile['name']
-        #             st.warning("You cannot recover this profile in the future")
-        #         with col3:
-        #             if st.session_state.to_delete == profile['name'] and st.session_state[f"Delete-{profile['name']}"]:
-        #                 print(f"Show confirm button of profile {profile['name']} is: True")
-        #                 # print(f"{profile['name']}")
-        #                 # print(st.session_state[f"Delete-{profile['name']}"])
-                        
-        #                 # if button(f"Confirm Delete Profile", key=f"Confirm-{profile['name']}"):
-        #                 if st.button("Confirm"):
-        #                     print("Deleted")
-        #                     # Your delete logic here
-        #                     st.write(f"Profile {profile['name']} deleted")
-        #                     # test.delete_profile_by_name(profile['name'])
-        #                     st.session_state.to_delete = None  # Reset the to_delete state
-        #                     center_running()
-        #                     time.sleep(2)
-        #                 print("Not Deleted")
         
         # Show list of profiles
         st.write("### List of Profiles")
@@ -270,34 +239,7 @@ with st.container():
                     center_running()
                     time.sleep(2)
                     st.experimental_rerun()
-                    #         with col3:
-                    #             if st.session_state.to_delete == profile['name'] and st.session_state[f"Delete-{profile['name']}"]:
-                    #                 print(f"Show confirm button of profile {profile['name']} is: True")
-                    #                 # print(f"{profile['name']}")
-                    #                 # print(st.session_state[f"Delete-{profile['name']}"])
-                                    
-                    #                 # if button(f"Confirm Delete Profile", key=f"Confirm-{profile['name']}"):
-                    #                 if st.button("Confirm"):
-                    #                     print("Deleted")
-                    #                     # Your delete logic here
-                    #                     st.write(f"Profile {profile['name']} deleted")
-                    #                     # test.delete_profile_by_name(profile['name'])
-                    #                     st.session_state.to_delete = None  # Reset the to_delete state
-                    #                     center_running()
-                    #                     time.sleep(2)
-                    #                 print("Not Deleted")
-            
-        # # Print the session state to make it easier to see what's happening
-        # st.write(
-        #     f"""
-        #     ## Session state:
-        #     {st.session_state["Delete-123"]=}
-
-        #     {st.session_state["Delete-155"]=}
-            
-        #     """
-        # )     
-                        
+                    
 with st.container():
     st.write("### Response:")
     st.code(f"{response}", language="json")

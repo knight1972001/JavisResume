@@ -167,6 +167,24 @@ def write_cover_letter(profile_name, job_description, addition_request=""):
     
     return chat_completion['choices'][0]['message']['content']
 
+def answer_question_base_on_resume(profile_name, question, addition_request=""):
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    chat = ""
+    
+    if addition_request == "":
+        chat = "This is my resume: " + get_resume_by_name(profile_name) + "\n\n" + ". This is job description: " + question + "\n\n" + ". Answer the question based on my resume."
+    else:
+        chat = "This is my resume: " + get_resume_by_name(profile_name) + "\n\n" + ". This is job description: " + question + "\n\n" + ". Answer the question based on my resume and " + addition_request
+    
+    message = [{
+        "role": "user",
+        "content": chat
+    }]
+    
+    chat_completion = openai.ChatCompletion.create(model=model, messages=message, temperature=0.2)
+    
+    return chat_completion['choices'][0]['message']['content']
+
 def suggest_resume(resume):
     openai.api_key = st.secrets["OPENAI_API_KEY"]
     chat = ""
