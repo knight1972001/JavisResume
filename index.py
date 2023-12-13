@@ -5,9 +5,8 @@ from streamlit_lottie import st_lottie
 from streamlit_extras.stateful_button import button
 from streamlit_extras.customize_running import center_running
 from streamlit_extras.streaming_write import write
-import core
-import test
-
+import actionDB
+import action
 
 st.set_page_config(page_title= "Jarvis Job Advisor", layout="wide", menu_items={"About": "#contact"})
 response = ""
@@ -50,7 +49,8 @@ local_css("style/style.css")
 # load assets
 lottie_coding = load_lottieurl("https://lottie.host/3f609a3d-1f8e-4119-abfe-1d55db24a1bf/lEuhW50jrQ.json")
 
-
+# response = actionDB.get_resume_by_name("Long_TEST-13-12-2023-16-13-06")
+# HTML OUTPUT
 
 # Header
 with st.container():
@@ -160,16 +160,20 @@ with st.container():
             if submit_button:
                 st.session_state.show_form = 'form1'  # Reset the form visibility if needed
                 center_running()
-                test.create_profile(user_name, user_resume)
-                print("submited form 1")
-                response = f"Created profile for user {user_name}"
+                # action.create_profile(user_name, user_resume)
+                if(actionDB.create_profile(user_name, user_resume)):
+                    print("submited form 1")
+                    response = f"Created profile for user {user_name} profile"
+                else:
+                    response = f"Fail to create {user_name} profile, Please wait a minute before trying again"
 
     elif st.session_state.show_form == 'form2':
         clear_response()
         with st.form(key='form2'):
             st.write("***Write cover letter***")
             
-            names = test.get_profiles_name()
+            # names = action.get_profiles_name()
+            names = actionDB.get_profiles_name()
             
             name = st.selectbox("Select user resume: ", names)
             job_description = st.text_area("Job Description: ", value="", height=300, max_chars=None)
@@ -179,7 +183,7 @@ with st.container():
             if submit_button:
                 st.write(f"Submitted Job Description and Resume")
                 center_running()
-                response = test.write_cover_letter(name, job_description, addition_request)
+                response = action.write_cover_letter(name, job_description, addition_request)
                 st.session_state.show_form = 'form2'  # Reset the form visibility if needed
 
     elif st.session_state.show_form == 'form3':
@@ -193,7 +197,7 @@ with st.container():
             if submit_button:
                 st.write(f"Submitted Resume")
                 center_running()
-                response = test.suggest_resume(user_resume)
+                response = action.suggest_resume(user_resume)
                 st.session_state.show_form = 'form3'  # Reset the form visibility if needed
                     
     elif st.session_state.show_form == 'form4':
@@ -201,7 +205,7 @@ with st.container():
         with st.form(key='form4'):
             st.write("Enter your question")
             
-            names = test.get_profiles_name()
+            names = actionDB.get_profiles_name()
             
             name = st.selectbox("Select user resume: ", names)
             job_description = st.text_area("Question: ", value="", height=300, max_chars=None)
@@ -211,12 +215,12 @@ with st.container():
             if submit_button:
                 st.write(f"Submitted Question and Resume")
                 center_running()
-                response = test.answer_question_base_on_resume(name, job_description, addition_request)
+                response = action.answer_question_base_on_resume(name, job_description, addition_request)
                 st.session_state.show_form = 'form4'  # Reset the form visibility if needed
                 
     elif st.session_state.show_form == 'form5':
         response = "Deleting process"
-        profiles = test.load_profiles()
+        profiles = actionDB.get_profiles_name()
         
         # Show list of profiles
         st.write("### List of Profiles")
@@ -225,17 +229,20 @@ with st.container():
         if 'to_delete' not in st.session_state:
             st.session_state.to_delete = None
 
-        for i, profile in enumerate(profiles):
+        for i, name in enumerate(profiles):
             col1, col2 = st.columns([3, 1])  # Adjust the numbers for your specific layout needs
 
             with col1:
-                st.write(f"{i+1}. {profile['name']}")
+                st.write(f"{i+1}. {name}")
 
             with col2:
-                if st.button("❌", key=f"Delete-{profile['name']}") :
-                    st.session_state.to_delete = profile['name']
+                if st.button("❌", key=f"Delete-{name}") :
+                    st.session_state.to_delete = name
                     st.warning("You cannot recover this profile in the future")
-                    test.delete_profile_by_name(profile['name'])
+                    if(actionDB.delete_profile_by_name(name)):
+                        response = f'Deleted {name} profile'
+                    else:
+                        response = f'Failed when delete {name} profile'
                     center_running()
                     time.sleep(2)
                     st.experimental_rerun()
