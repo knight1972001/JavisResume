@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 import streamlit as st
-import openai
+from openai import OpenAI
 import actionDB
 
 
@@ -124,7 +124,9 @@ temperature_const = 0.5
 #     return False
     
 def write_cover_letter(profile_name, job_description, addition_request=""):
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
     chat = ""
     
     if addition_request == "":
@@ -137,7 +139,7 @@ def write_cover_letter(profile_name, job_description, addition_request=""):
         "content": chat
     }]
     
-    chat_completion = openai.ChatCompletion.create(model=model, messages=message, temperature=temperature_const)
+    chat_completion = client.chat.completions.create(model=model, messages=message, temperature=temperature_const)
     # Your JSON object as a string
     # json_str = '''
     # {
@@ -164,13 +166,15 @@ def write_cover_letter(profile_name, job_description, addition_request=""):
     # '''
 
     # Parse the JSON string to a Python dictionary
-    # chat_completion = json.loads(json_str)
-    # print(chat_completion['choices'][0]['message']['content'])
+    # chat_completion = json.loads(json_str),
+    # print(chat_completion.choices[0].message.content)
     
-    return chat_completion['choices'][0]['message']['content']
+    return chat_completion.choices[0].message.content
 
 def answer_question_base_on_resume(profile_name, question, addition_request=""):
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
     chat = ""
     
     if addition_request == "":
@@ -183,12 +187,14 @@ def answer_question_base_on_resume(profile_name, question, addition_request=""):
         "content": chat
     }]
     
-    chat_completion = openai.ChatCompletion.create(model=model, messages=message, temperature=temperature_const)
+    chat_completion = client.chat.completions.create(model=model, messages=message, temperature=temperature_const)
     
-    return chat_completion['choices'][0]['message']['content']
+    return chat_completion.choices[0].message.content
 
 def suggest_resume(resume):
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"]
+    )
     chat = ""
     
     chat = "This is my resume: \n`" + resume + "`\n" + "Give me some advisor to have better resume!"
@@ -198,9 +204,10 @@ def suggest_resume(resume):
         "content": chat
     }]
     
-    chat_completion = openai.ChatCompletion.create(model=model, messages=message, temperature=temperature_const)
+    chat_completion = client.chat.completions.create(model=model, messages=message, temperature=temperature_const)
     
-    return chat_completion['choices'][0]['message']['content']
+    return chat_completion.choices[0].message.content
+
 
 
 # print("TESTING ---")
