@@ -54,7 +54,6 @@ lottie_coding = load_lottieurl("https://lottie.host/3f609a3d-1f8e-4119-abfe-1d55
 
 # Header
 with st.container():
-    # st.subheader("Hi, I'm Jarvis, your job coordinator <span class="wave">🖐")
     st.markdown("""
     ## Hi, I'm Jarvis, your job coordinator <span class="wave">🖐</span> 
 """, unsafe_allow_html=True)
@@ -87,33 +86,6 @@ with st.container():
     
     st.write("---")
     
-    # st.write("[Contact:](https://google.com/search)")
-    
-# # Initialize session state
-# if 'show_form' not in st.session_state:
-#     st.session_state.show_form = False
-
-# with st.container():
-#     button1 = st.button("Show Form 1")
-    
-#     if button1:
-#         st.session_state.show_form = not st.session_state.show_form
-
-#     if st.session_state.show_form:
-#         with st.form(key='form9'):
-#             st.write("***Add new resume***")
-#             user_name = st.text_input("Your name: ")
-#             user_input = st.text_area("Your resume: ", value="", height=600, max_chars=None)
-#             submit_button = st.form_submit_button("Submit Resume")
-
-#             if submit_button:
-#                 st.write(f"Submitted Form 1 with {user_input} for user {user_name}")
-#                 response = "This is the API response."
-#                 st.session_state.show_form = False  # Reset the form visibility if needed
-#             else:
-#                 st.write(f"Not Submitted Form 1 with {user_input} for user {user_name}")
-
-
 # Initialize session state
 if 'show_form' not in st.session_state:
     st.session_state.show_form = None
